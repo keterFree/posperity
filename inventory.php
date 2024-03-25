@@ -124,7 +124,7 @@ session_start();
                     include "dbconfig.php";
 
                     // Fetch data from the database
-                    $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user`, `merchant` FROM `product` WHERE `merchant` = ?";
+                    $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user_id`, `merchant` FROM `product` WHERE `merchant` = ?";
 
                     $stmt = $conn->prepare($sql);
 
