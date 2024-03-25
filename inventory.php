@@ -171,7 +171,7 @@ session_start();
                         } else {
                             echo "<script>";
                             // echo "console.log('NUll merchant id');";
-                            echo "console.log(".$session['test'].");";
+                            echo "alert(".$session['test'].");";
                             // echo "location.reload();";
                             echo "</script>";
                         }
