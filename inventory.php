@@ -105,7 +105,7 @@ session_start();
         <div>
             <div class="actionsBar">
                 <div>
-                    <a class="button" href="'add_product.php'">Add items</a>
+                    <a class="button" href="add_product.php">Add items</a>
                 </div>
                 <div>
                     <div class="searchBar">
