@@ -105,7 +105,7 @@ session_start();
         <div>
             <div class="actionsBar">
                 <div>
-                    <button class="button" onclick="toAdd()">Add items</button>
+                    <a class="button" href="'add_product.php'">Add items</a>
                 </div>
                 <div>
                     <div class="searchBar">
@@ -203,11 +203,6 @@ session_start();
                 cards[i].style.display = 'none';
             }
         }
-    }
-
-    function toAdd() {
-        // Redirect to another page (replace 'page-url' with the actual URL)
-        window.location.href = 'add_product.php';
     }
 </script>
 

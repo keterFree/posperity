@@ -37,7 +37,7 @@
             // Store the JSON string in local storage
             localStorage.setItem('loginData', jsonString);
 
-            alert('All div contents stored in local storage!');
+            // alert('All div contents stored in local storage!');
         } else {
             alert('One or more div elements not found!');
         }
