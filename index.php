@@ -103,7 +103,8 @@
             <h2 id='h2'></h2>
             <div class='profile-image'><img src='assets\profile.png' alt='Profile Image'></div>
         </div>
-
+        <?php
+        $_SESSION['test'] = 'sample value'; ?>
     </div>
     <footer>
         <p style="font-size: 10px;">
