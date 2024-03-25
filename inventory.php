@@ -170,7 +170,8 @@ session_start();
                             echo "<tr><td colspan='7'>No data found</td></tr>";
                         } else {
                             echo "<script>";
-                            echo "location.reload();";
+                            echo "console.log(NUll merchant id);";
+                            // echo "location.reload();";
                             echo "</script>";
                         }
                     }
