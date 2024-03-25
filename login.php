@@ -7,6 +7,42 @@
     <title>Login</title>
     <link rel="stylesheet" href="sign.css">
 </head>
+<script>
+    function storeDivContents() {
+        // Get all div elements by their IDs
+        const usnElement = document.getElementById('usn');
+        const mnameElement = document.getElementById('mname');
+        const meridElement = document.getElementById('merid');
+        const suidElement = document.getElementById('suid');
+
+        // Check if the div elements exist
+        if (usnElement && mnameElement && meridElement && suidElement) {
+            // Get the contents of the divs
+            const usnContents = usnElement.innerHTML;
+            const mnameContents = mnameElement.innerHTML;
+            const meridContents = meridElement.innerHTML;
+            const suidContents = suidElement.innerHTML;
+
+            // Create an object to store all the contents
+            const divContents = {
+                usn: usnContents,
+                mname: mnameContents,
+                merid: meridContents,
+                suid: suidContents
+            };
+
+            // Convert the object to a JSON string
+            const jsonString = JSON.stringify(divContents);
+
+            // Store the JSON string in local storage
+            localStorage.setItem('allDivContents', jsonString);
+
+            alert('All div contents stored in local storage!');
+        } else {
+            alert('One or more div elements not found!');
+        }
+    }
+</script>
 
 <body>
     <header>
@@ -25,7 +61,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" id="try">Login</button>
             <div style="color: red;">
                 <?php
                 $data = 1;
@@ -34,20 +70,8 @@
 
                     // Retrieve hashed password from the database
 
-                    // Database connection parameters
-                    $servername = "localhost";
-                    $username = "root";
-                    $password = "";
-                    $database = "posperity";
-
-                    // Create connection
-                    $conn = new mysqli($servername, $username, $password, $database);
-
-                    // Check connection
-                    if ($conn->connect_error) {
-                        echo "connection failed!!!";
-                        die("Connection failed: " . $conn->connect_error);
-                    }
+                    // Database connection
+                    include "dbconfig.php";
 
                     // User input (username or email)
                     $userInput = $_POST["username"];
@@ -88,14 +112,16 @@
                             session_start();
 
                             // Store the username in the session
-                            $_SESSION["username"] = $uname;
-                            $_SESSION["merchantname"] = $mname;
-                            $_SESSION["merchantid"] = $merid;
-                            $_SESSION["userid"] = $suid;
-                            echo $_SESSION["username"];
+                            echo '<div id="usn" style="display: none;">' . $uname . '</div>';
+                            echo '<div id="mname" style="display: none;">' . $mname . '</div>';
+                            echo '<div id="merid" style="display: none;">' . $merid . '</div>';
+                            echo '<div id="suid" style="display: none;">' . $suid . '</div>';
+                            echo '<script>';
+                            echo 'storeDivContents();'; // Call the storeDivContents() function
+                            echo '</script>';
 
                             // Redirect to the home page
-                            header("Location: index.php");
+                            echo '<script>window.location.href = "index.php"</script>';
                             exit();
                         } else {
                             // Redirect back to the login page with an error message
