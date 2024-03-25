@@ -120,7 +120,7 @@ include "dbconfig.php";
                                             $row = $result->fetch_assoc();
                                             $mid  = $row['mid'];
                                             // SQL query with placeholders
-                                            $sql = "INSERT INTO `user`( `user_name`, `password`, `merchant`, `email`, `fullname`, `address`, `mobile`) VALUES (?,?,?,?,?,?,?)";
+                                            $sql = "INSERT INTO `user`( `user_name`, `password`, `merchant_id`, `email`, `fullname`, `address`, `mobile`) VALUES (?,?,?,?,?,?,?)";
                                             // Prepare and bind the statement
                                             $stmt = $conn->prepare($sql);
                                             $stmt->bind_param("sssssss", $username, $hashedPassword, $mid, $email, $name, $address, $mobile);
@@ -171,7 +171,9 @@ include "dbconfig.php";
                                 }
                             } catch (Exception $e) {
                                 // Print error message to JavaScript console
-                                echo "<script>console.log(" . $e->getMessage() .");</script>";
+                                echo "<script>";
+                                echo "console.log(" . $e->getMessage() . ");";
+                                echo "</script>";
                             }
                         } else {
                             echo "Email address is not valid.";
