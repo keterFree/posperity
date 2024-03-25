@@ -1,10 +1,4 @@
 <?php
- // Database connection parameters
- $servername = "localhost";
- $dbusername = "root";
- $dbpassword = "";
- $database = "posperity";
- 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
