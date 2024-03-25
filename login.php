@@ -69,70 +69,75 @@
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     // Retrieve hashed password from the database
+                    try {
+                        // Database connection
+                        include "dbconfig.php";
 
-                    // Database connection
-                    include "dbconfig.php";
+                        // User input (username or email)
+                        $userInput = $_POST["username"];
 
-                    // User input (username or email)
-                    $userInput = $_POST["username"];
-
-                    // Prepare SQL statement
-                    $sql = "SELECT u.user_id, u.user_name, u.password, u.merchant_id, u.email, u.fullname, u.address, u.mobile,m.merchantname 
+                        // Prepare SQL statement
+                        $sql = "SELECT u.user_id, u.user_name, u.password, u.merchant_id, u.email, u.fullname, u.address, u.mobile,m.merchantname 
                         FROM user u LEFT JOIN merchant m ON u.merchant = m.mid WHERE u.user_name = ? OR u.email = ?";
-                    $stmt = $conn->prepare($sql);
+                        $stmt = $conn->prepare($sql);
 
-                    // Bind the parameter to the statement
-                    $stmt->bind_param("ss", $userInput, $userInput);
+                        // Bind the parameter to the statement
+                        $stmt->bind_param("ss", $userInput, $userInput);
 
-                    // Execute the query
-                    $stmt->execute();
+                        // Execute the query
+                        $stmt->execute();
 
-                    // Get the result
-                    $result = $stmt->get_result();
+                        // Get the result
+                        $result = $stmt->get_result();
 
-                    // Check if the query returned any rows
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $suid  = $row['user_id'];
-                        $uname  = $row['user_name'];
-                        $hashedPassword = $row['password'];
-                        $mname = $row['merchantname'];
-                        $merid = $row['merchant'];
+                        // Check if the query returned any rows
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            $suid  = $row['user_id'];
+                            $uname  = $row['user_name'];
+                            $hashedPassword = $row['password'];
+                            $mname = $row['merchantname'];
+                            $merid = $row['merchant'];
 
 
-                        // Password entered by the user during login
-                        $userEnteredPassword = $_POST["password"];
-                        $hashedUserEnteredPassword = password_hash($userEnteredPassword, PASSWORD_DEFAULT);
-                        // Verify if the user-entered password matches the stored hashed password
-                        echo password_verify($userEnteredPassword, $hashedPassword);
-                        if (password_verify($userEnteredPassword, $hashedPassword)) {
+                            // Password entered by the user during login
+                            $userEnteredPassword = $_POST["password"];
+                            $hashedUserEnteredPassword = password_hash($userEnteredPassword, PASSWORD_DEFAULT);
+                            // Verify if the user-entered password matches the stored hashed password
+                            echo password_verify($userEnteredPassword, $hashedPassword);
+                            if (password_verify($userEnteredPassword, $hashedPassword)) {
 
-                            echo "match found";
-                            // Start the session
-                            session_start();
+                                echo "match found";
+                                // Start the session
+                                session_start();
 
-                            // Store the username in the session
-                            echo '<div id="usn" style="display: none;">' . $uname . '</div>';
-                            echo '<div id="mname" style="display: none;">' . $mname . '</div>';
-                            echo '<div id="merid" style="display: none;">' . $merid . '</div>';
-                            echo '<div id="suid" style="display: none;">' . $suid . '</div>';
-                            echo '<script>';
-                            echo 'storeDivContents();'; // Call the storeDivContents() function
-                            echo '</script>';
+                                // Store the username in the session
+                                echo '<div id="usn" style="display: none;">' . $uname . '</div>';
+                                echo '<div id="mname" style="display: none;">' . $mname . '</div>';
+                                echo '<div id="merid" style="display: none;">' . $merid . '</div>';
+                                echo '<div id="suid" style="display: none;">' . $suid . '</div>';
+                                echo '<script>';
+                                echo 'storeDivContents();'; // Call the storeDivContents() function
+                                echo '</script>';
 
-                            // Redirect to the home page
-                            echo '<script>window.location.href = "index.php"</script>';
-                            exit();
+                                // Redirect to the home page
+                                echo '<script>window.location.href = "index.php"</script>';
+                                exit();
+                            } else {
+                                // Redirect back to the login page with an error message
+                                // header("Location: login.php?error=1");
+                                echo "incorrect password,please retry";
+                            }
                         } else {
-                            // Redirect back to the login page with an error message
-                            // header("Location: login.php?error=1");
-                            echo "incorrect password,please retry";
+                            // No matching user found
+                            echo "Incorrect email or username, please retry";
                         }
-                    } else {
-                        // No matching user found
-                        echo "Incorrect email or username, please retry";
+                    } catch (Exception $e) {
+                        // Print error message to JavaScript console
+                        echo "<script>";
+                        echo "console.log(" . $e->getMessage() . ");";
+                        echo "</script>";
                     }
-
                     // Close statement and connection
                     $stmt->close();
                     $conn->close();
