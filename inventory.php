@@ -127,7 +127,7 @@ session_start();
                     $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user_id`, `merchant_id` FROM `product` WHERE `merchant_id` = ?";
 
                     $stmt = $conn->prepare($sql);
-                    echo $php_merid;
+                    echo "<script>alert(" . $php_merid . ");</script>";
                     // Bind the parameter to the statement
                     $stmt->bind_param("i", $php_merid);
 
