@@ -157,7 +157,7 @@ $conn->close();
                 include 'dbconfig.php';
 
                 // Prepare and bind parameters for the SQL statement
-                $sql = "INSERT INTO product (name, description, price, quantity, img_url, user, merchant) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO product (name, description, price, quantity, img_url, user_id, merchant_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ssdissi", $name, $description, $price, $quantity, $img_url, $user, $merchant);
 
