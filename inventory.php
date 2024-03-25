@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,44 +17,85 @@
 <body>
     <header>
         <h1>
-            <?php
-            session_start();
-            if (isset($_SESSION['merchantname'])) {
-                echo "{$_SESSION['merchantname']} Inventory";
-            }
-            ?>
+            <div id="usn" style="display: none;"></div>
+            <div id="mname" style="display: none;"></div>
+            <div id="merid" style="display: none;"></div>
+            <div id="suid" style="display: none;"></div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Retrieve the JSON string from local storage
+                    const jsonString = localStorage.getItem('loginData');
+
+                    // Check if the JSON string exists in local storage
+                    if (jsonString) {
+                        // Parse the JSON string back to an object
+                        const divContents = JSON.parse(jsonString);
+
+                        // Access the values from the object
+                        const usnValue = divContents.usn;
+                        const mnameValue = divContents.mname;
+                        const meridValue = divContents.merid;
+                        const suidValue = divContents.suid;
+
+                        // Populate the div elements if values exist in local storage
+                        if (usnValue) {
+                            document.getElementById('usn').textContent = usnValue;
+                        }
+                        if (mnameValue) {
+                            document.getElementById('mname').textContent = mnameValue;
+                            document.getElementById('mname').style.display = 'block';
+                        }
+                        if (meridValue) {
+                            document.getElementById('merid').textContent = meridValue;
+                        }
+                        if (suidValue) {
+                            document.getElementById('suid').textContent = suidValue;
+                        }
+
+                        // AJAX request to send values to PHP script
+                        const xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                                // Response received from PHP script
+                                console.log("Response from PHP script:", this.responseText);
+                            }
+                        };
+                        xhttp.open("GET", "processData.php?usn=" + usnValue + "&mname=" + mnameValue + "&merid=" + meridValue + "&suid=" + suidValue, true);
+                        xhttp.send();
+                    } else {
+                        console.log('No data found in local storage for key "loginData"');
+                    }
+                });
+            </script>
+
+
+
         </h1>
         <div class="head">
-            <a href="logout.php">
-                <?php
-                // Check if "userid" session variable is set and not equal to 0
-                if (isset($_SESSION["userid"]) && $_SESSION["userid"] != 0) {
-                    echo 'log out';
-                } else {
-                    echo 'log in';
-                }
-                ?>
-
-            </a>
+            <div></div>
             <div class="menu">
                 <a onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></a>
                 <div id="hide" class="navbar-toggle">
-                    <a class="bar" href="index.php">Home</a>
+                    <a class="bar" href="#">Home</a>
                     <a class="bar" href="makeSale.php">Make Sale</a>
                     <a class="bar" href="inventory.php">Inventory</a>
                     <a class="bar" href="transactions.php">Transactions</a>
                     <a class="bar" href="about.html">About</a>
                     <a class="bar" href="services.html">Services</a>
+                    <a class="bar" href="contact.html">Contact</a>
+                    <a class="bar" href="logout.php"><i class="fa-regular fa-user" style="color: #ffffff;"></i> log out</a>
                 </div>
             </div>
             <nav class="nav" id="navbarLinks">
                 <ul>
-                    <li><a href="index.php">Home</a></li>
+                    <li><a href="#">Home</a></li>
                     <li><a href="makeSale.php">Make Sale</a></li>
                     <li><a href="inventory.php">Inventory</a></li>
                     <li><a href="transactions.php">Transactions</a></li>
                     <li><a href="about.html">About</a></li>
                     <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="logout.php"><i class="fa-regular fa-user" style="color: #ffffff;"></i> log out</a></li>
                 </ul>
             </nav>
         </div>
@@ -73,25 +117,18 @@
             <div class="inventorydiv1">
                 <!-- <button>::</button> -->
                 <?php
+                $_SERVER["REQUEST_METHOD"] = "POST";
+                include 'processData.php';
                 // Connect to your database
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "posperity";
-
-                $conn = new mysqli($servername, $username, $password, $dbname);
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                include "dbconfig.php";
 
                 // Fetch data from the database
-                $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,
-             `user`, `merchant` FROM `product` WHERE `merchant` = ?";
+                $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user`, `merchant` FROM `product` WHERE `merchant` = ?";
 
                 $stmt = $conn->prepare($sql);
 
                 // Bind the parameter to the statement
-                $stmt->bind_param("i", $_SESSION['merchantid']);
+                $stmt->bind_param("i", $php_merid);
 
                 // Execute the query
                 $stmt->execute();

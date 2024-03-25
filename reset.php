@@ -1,5 +1,6 @@
 <?php
 include "mail.php";
+include "dbconfig.php";
 $resetToken = generateResetToken();
 $reset = false;
 $rUID = "";

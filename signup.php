@@ -1,5 +1,6 @@
 <?php
 include "mail.php";
+include "dbconfig.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">

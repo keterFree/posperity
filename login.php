@@ -35,7 +35,7 @@
             const jsonString = JSON.stringify(divContents);
 
             // Store the JSON string in local storage
-            localStorage.setItem('allDivContents', jsonString);
+            localStorage.setItem('loginData', jsonString);
 
             alert('All div contents stored in local storage!');
         } else {

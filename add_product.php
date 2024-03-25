@@ -1,20 +1,12 @@
 <?php
 session_start();
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "posperity";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include "dbconfig.php";
 
 // Select the last inserted product ID from the product table
 $sql = "SELECT MAX(product_id) as last_product_id FROM product";
 $result = $conn->query($sql);
+
 
 if ($result->num_rows > 0) {
     // Output data of each row
@@ -46,7 +38,57 @@ $conn->close();
 <body>
     <header>
         <h1>
-            Add item to Inventory
+            <div id="usn" style="display: none;"></div>
+            <div id="mname" style="display: none;"></div>
+            <div id="merid" style="display: none;"></div>
+            <div id="suid" style="display: none;"></div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Retrieve the JSON string from local storage
+                    const jsonString = localStorage.getItem('loginData');
+
+                    // Check if the JSON string exists in local storage
+                    if (jsonString) {
+                        // Parse the JSON string back to an object
+                        const divContents = JSON.parse(jsonString);
+
+                        // Access the values from the object
+                        const usnValue = divContents.usn;
+                        const mnameValue = divContents.mname;
+                        const meridValue = divContents.merid;
+                        const suidValue = divContents.suid;
+
+                        // Populate the div elements if values exist in local storage
+                        if (usnValue) {
+                            document.getElementById('usn').textContent = usnValue;
+                        }
+                        if (mnameValue) {
+                            document.getElementById('mname').textContent = mnameValue;
+                            document.getElementById('mname').style.display = 'block';
+                        }
+                        if (meridValue) {
+                            document.getElementById('merid').textContent = meridValue;
+                        }
+                        if (suidValue) {
+                            document.getElementById('suid').textContent = suidValue;
+                        }
+
+                        // AJAX request to send values to PHP script
+                        const xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && this.status == 200) {
+                                // Response received from PHP script
+                                console.log("Response from PHP script:", this.responseText);
+                            }
+                        };
+                        xhttp.open("GET", "processData.php?usn=" + usnValue + "&mname=" + mnameValue + "&merid=" + meridValue + "&suid=" + suidValue, true);
+                        xhttp.send();
+                    } else {
+                        console.log('No data found in local storage for key "loginData"');
+                    }
+                });
+            </script>
+
         </h1>
     </header>
     <div class="container">
@@ -93,6 +135,10 @@ $conn->close();
         <?php
         // Check if the form is submitted
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            include 'processData.php';
+            echo "<script>";
+            echo "  alert(" . $php_usn . ");";
+            echo "</script>";
             // Check if all required fields are present
             if (isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price']) && isset($_POST['quantity']) && isset($_POST['img_url'])) {
 
@@ -103,19 +149,12 @@ $conn->close();
                 $price = floatval($_POST['price']); // Convert to float for price
                 $quantity = intval($_POST['quantity']); // Convert to integer for quantity
                 $img_url = htmlspecialchars($_POST['img_url']);
+                $user = $php_suid;
+                $merchant = $php_merid;
 
                 // Additional sanitization and validation can be added here
 
-                // Connect to your database
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "posperity";
-
-                $conn = new mysqli($servername, $username, $password, $dbname);
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                include 'dbconfig.php';
 
                 // Prepare and bind parameters for the SQL statement
                 $sql = "INSERT INTO product (name, description, price, quantity, img_url, user, merchant) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -124,8 +163,8 @@ $conn->close();
 
 
                 // Example user and merchant values (adjust as needed)
-                $user = $_SESSION['userid'];;
-                $merchant = $_SESSION['merchantid']; // Assuming you store the merchant ID in a session variable
+                // $user = echo '<script> usnValue </script>';
+                 // Assuming you store the merchant ID in a session variable
 
                 // Execute the SQL statement
                 if ($stmt->execute()) {
@@ -330,7 +369,7 @@ $conn->close();
 
 
 
-    var prod_name = "<?php echo $_SESSION['lastProductId']+1; ?>";
+    var prod_name = "<?php echo $_SESSION['lastProductId'] + 1; ?>";
     const storageRef = ref(storage, 'images/' + prod_name + '.txt'); // Specify the file path or name in Firebase Storage
     const localStorageKey = 'capturedImage'; // Key used to store the file data in Local Storage
     const targetElementId = 'img_url'; // ID of the target element to set the download URL

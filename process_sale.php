@@ -63,15 +63,7 @@
                 // Check if all arrays have the same length (for safety)
                 if (count($quantities) === count($productIDs) && count($productIDs) === count($prices) && count($prices) === count($discounts)) {
                     // Database connection
-                    $servername = "localhost";
-                    $username = "root";
-                    $password = "";
-                    $dbname = "posperity";
-
-                    $conn = new mysqli($servername, $username, $password, $dbname);
-                    if ($conn->connect_error) {
-                        die("Connection failed: " . $conn->connect_error);
-                    }
+                    include "dbconfig.php";
 
                     // Prepare and bind parameters for the update query
                     $updateSql = "UPDATE `product` SET `quantity` = `quantity` - ? WHERE `product_id` = ? AND `quantity` >= ?";
@@ -146,8 +138,8 @@
 
                         echo '<tr>';
                         echo '<td>' . $productName . '</td>';
-                        echo '<td>' . $quantitiesSold[$index] . 'x'.$prodPrice[$index] . '</td>';
-                        echo '<td>' . $discountsApplied[$index] .'('.$prodSellingPrice[$index].')'. '</td>';
+                        echo '<td>' . $quantitiesSold[$index] . 'x' . $prodPrice[$index] . '</td>';
+                        echo '<td>' . $discountsApplied[$index] . '(' . $prodSellingPrice[$index] . ')' . '</td>';
                         echo '</tr>';
                     }
                     echo '<tr><th>Total</th><th>' . $totalQuantity . '</th><th>' . $totalDiscount . '</th></tr>';
