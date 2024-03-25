@@ -1,9 +1,30 @@
--- Create tables without data
-
 CREATE TABLE `merchant` (
   `mid` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `merchantname` VARCHAR(70) NOT NULL,
   PRIMARY KEY (`mid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `user` (
+  `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_name` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `merchant_id` INT UNSIGNED NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `fullname` VARCHAR(255) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `mobile` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`),
+  INDEX `merchant_idx` (`merchant_id`),
+  FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`mid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `reset` (
+  `rUID` INT UNSIGNED NOT NULL,
+  `token` VARCHAR(200) NOT NULL,
+  `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`rUID`),
+  CONSTRAINT `reset_ibfk_1` FOREIGN KEY (`rUID`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `product` (
@@ -20,14 +41,6 @@ CREATE TABLE `product` (
   INDEX `merchant_idx` (`merchant_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
   FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`mid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-CREATE TABLE `reset` (
-  `rUID` INT UNSIGNED NOT NULL,
-  `token` VARCHAR(200) NOT NULL,
-  `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`rUID`),
-  CONSTRAINT `reset_ibfk_1` FOREIGN KEY (`rUID`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `sale` (
@@ -47,20 +60,5 @@ CREATE TABLE `sale` (
   INDEX `merchant_idx` (`merchant_id`),
   FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`mid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-CREATE TABLE `user` (
-  `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_name` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `merchant_id` INT UNSIGNED NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
-  `fullname` VARCHAR(255) NOT NULL,
-  `address` VARCHAR(255) NOT NULL,
-  `mobile` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `email` (`email`),
-  INDEX `merchant_idx` (`merchant_id`),
   FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`mid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
