@@ -171,7 +171,7 @@ include "dbconfig.php";
                                 }
                             } catch (Exception $e) {
                                 // Print error message to JavaScript console
-                                echo "<script>console.error('PHP Exception: " . $e->getMessage() . "');</script>";
+                                echo "<script>console.error(" . $e->getMessage() .");</script>";
                             }
                         } else {
                             echo "Email address is not valid.";
