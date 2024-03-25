@@ -79,58 +79,58 @@ include "dbconfig.php";
                             // check if username or email already exists
                             // if rows > 0 then write to database
                             // then send email
-
-                            $findsql = $sql = "SELECT `user_id` FROM `user` WHERE `user_name` = ? OR `email` = ?";
-                            $stmt = $conn->prepare($sql);
-
-                            // Bind the parameters to the statement
-
-                            $stmt->bind_param("ss", $username, $email);
-
-                            // Execute the query
-                            $stmt->execute();
-
-                            // Get the result
-                            $result = $stmt->get_result();
-                            // echo $result->num_rows;
-                            if ($result->num_rows == 0) {
-
-                                // SQL query with placeholders
-                                $sql = "INSERT INTO `merchant`(`merchantname`) VALUES (?)";
-                                // Prepare and bind the statement
+                            try {
+                                $findsql = $sql = "SELECT `user_id` FROM `user` WHERE `user_name` = ? OR `email` = ?";
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bind_param("s", $mname);
 
-                                // Execute the statement
-                                if ($stmt->execute()) {
-                                    $sql = "SELECT `mid` FROM `merchant` WHERE `merchantname` = ?";
+                                // Bind the parameters to the statement
+
+                                $stmt->bind_param("ss", $username, $email);
+
+                                // Execute the query
+                                $stmt->execute();
+
+                                // Get the result
+                                $result = $stmt->get_result();
+                                // echo $result->num_rows;
+                                if ($result->num_rows == 0) {
+
+                                    // SQL query with placeholders
+                                    $sql = "INSERT INTO `merchant`(`merchantname`) VALUES (?)";
+                                    // Prepare and bind the statement
                                     $stmt = $conn->prepare($sql);
-
-                                    // Bind the parameter to the statement
                                     $stmt->bind_param("s", $mname);
 
-                                    // Execute the query
-                                    $stmt->execute();
-
-                                    // Get the result
-                                    $result = $stmt->get_result();
-
-                                    // Check if the query returned any rows
-                                    if ($result->num_rows > 0) {
-                                        $row = $result->fetch_assoc();
-                                        $mid  = $row['mid'];
-                                        // SQL query with placeholders
-                                        $sql = "INSERT INTO `user`( `user_name`, `password`, `merchant`, `email`, `fullname`, `address`, `mobile`) VALUES (?,?,?,?,?,?,?)";
-                                        // Prepare and bind the statement
+                                    // Execute the statement
+                                    if ($stmt->execute()) {
+                                        $sql = "SELECT `mid` FROM `merchant` WHERE `merchantname` = ?";
                                         $stmt = $conn->prepare($sql);
-                                        $stmt->bind_param("sssssss", $username, $hashedPassword, $mid, $email, $name, $address, $mobile);
 
-                                        // Execute the statement
-                                        if ($stmt->execute()) {
-                                            //if db written seccessfully then:
-                                            $to_email = $email;
-                                            $subject = "WELCOME";
-                                            $body = "
+                                        // Bind the parameter to the statement
+                                        $stmt->bind_param("s", $mname);
+
+                                        // Execute the query
+                                        $stmt->execute();
+
+                                        // Get the result
+                                        $result = $stmt->get_result();
+
+                                        // Check if the query returned any rows
+                                        if ($result->num_rows > 0) {
+                                            $row = $result->fetch_assoc();
+                                            $mid  = $row['mid'];
+                                            // SQL query with placeholders
+                                            $sql = "INSERT INTO `user`( `user_name`, `password`, `merchant`, `email`, `fullname`, `address`, `mobile`) VALUES (?,?,?,?,?,?,?)";
+                                            // Prepare and bind the statement
+                                            $stmt = $conn->prepare($sql);
+                                            $stmt->bind_param("sssssss", $username, $hashedPassword, $mid, $email, $name, $address, $mobile);
+
+                                            // Execute the statement
+                                            if ($stmt->execute()) {
+                                                //if db written seccessfully then:
+                                                $to_email = $email;
+                                                $subject = "WELCOME";
+                                                $body = "
                                                  <div style='max-width: 600px; margin: 0 auto; padding: 20px;'>
                                                     <h1>Welcome to Posperity - Your Business Empowered with Our POS Web App!</h1>
                                                     <p>Dear $name,</p>
@@ -146,28 +146,32 @@ include "dbconfig.php";
                                                     <p>Posperity</p>
                                                 </div>";
 
-                                            $from_email = "keterdummy@gmail.com";
+                                                $from_email = "keterdummy@gmail.com";
 
-                                            if (sendEmail($to_email, $subject, $body, $from_email)) {
-                                                echo "Email sent successfully.";
-                                                header("Location: login.php");
+                                                if (sendEmail($to_email, $subject, $body, $from_email)) {
+                                                    echo "Email sent successfully.";
+                                                    header("Location: login.php");
+                                                } else {
+                                                    echo "Email sending failed.";
+                                                }
                                             } else {
-                                                echo "Email sending failed.";
+                                                echo "Error: " . $sql . "<br>" . $conn->error;
                                             }
                                         } else {
-                                            echo "Error: " . $sql . "<br>" . $conn->error;
+                                            echo "merchant does not exist";
                                         }
                                     } else {
-                                        echo "merchant does not exist";
+                                        echo "Error: " . $sql . "<br>" . $conn->error;
                                     }
+                                    // Close statement and connection
+                                    $stmt->close();
+                                    $conn->close();
                                 } else {
-                                    echo "Error: " . $sql . "<br>" . $conn->error;
+                                    echo "<div style='color:red'>You already have an account,<a style='color:blue' href='login.php'>login.</a></div>";
                                 }
-                                // Close statement and connection
-                                $stmt->close();
-                                $conn->close();
-                            } else {
-                                echo "<div style='color:red'>You already have an account,<a style='color:blue' href='login.php'>login.</a></div>";
+                            } catch (Exception $e) {
+                                // Print error message to JavaScript console
+                                echo "<script>console.error('PHP Exception: " . $e->getMessage() . "');</script>";
                             }
                         } else {
                             echo "Email address is not valid.";
