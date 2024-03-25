@@ -73,14 +73,6 @@ include "dbconfig.php";
                         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 
-                            // Create connection
-                            $conn = new mysqli($servername, $dbusername, $dbpassword, $database);
-
-                            // Check connection
-                            if ($conn->connect_error) {
-                                die("Connection failed: " . $conn->connect_error);
-                            }
-
                             // Hash the password
                             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -165,10 +157,10 @@ include "dbconfig.php";
                                         } else {
                                             echo "Error: " . $sql . "<br>" . $conn->error;
                                         }
-                                    }else{
+                                    } else {
                                         echo "merchant does not exist";
                                     }
-                                }else{
+                                } else {
                                     echo "Error: " . $sql . "<br>" . $conn->error;
                                 }
                                 // Close statement and connection

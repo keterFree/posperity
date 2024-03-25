@@ -16,7 +16,7 @@ if ($conn->connect_error) {
     // Terminate script execution
     die("Connection failed: " . $conn->connect_error);
 } else {
-    // Connection successful
+    
     // You can optionally uncomment the following line to confirm successful connection
-    // echo "Connected successfully!";
+    echo "<script>alert('Connection successful');</script>";
 }
