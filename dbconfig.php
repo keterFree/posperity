@@ -1,8 +1,13 @@
 <?php
 // Database connection parameters
-$servername = "posper-server.mysql.database.azure.com";
-$dbusername = "mqsvqcmdyl";
-$dbpassword = "@posperity1";
+// $servername = "posper-server.mysql.database.azure.com";
+// $dbusername = "mqsvqcmdyl";
+// $dbpassword = "@posperity1";
+// $database = "posper";
+
+$servername = "localhost";
+$dbusername = "root";
+$dbpassword = "";
 $database = "posper";
 
 // Attempt to establish a database connection

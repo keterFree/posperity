@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 include "dbconfig.php";
 
 // Prepare and bind the SQL query with a placeholder for the ID
-$sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`, `user`, `merchant` FROM `product` WHERE `product_id` = ?";
+$sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`, `user_id`, `merchant_id` FROM `product` WHERE `product_id` = ?";
 $stmt = $conn->prepare($sql);
 
 // Bind the ID variable to the prepared statement
@@ -145,7 +145,7 @@ $conn->close();
                 // Additional sanitization and validation can be added here
 
                 // Prepare and bind parameters for the SQL statement to update product details
-                $sql = "UPDATE `product` SET `name`=?, `description`=?, `price`=?, `quantity`=?, `img_url`=?, `user`=?, `merchant`=? WHERE `product_id`=?";
+                $sql = "UPDATE `product` SET `name`=?, `description`=?, `price`=?, `quantity`=?, `img_url`=?, `user_id`=?, `merchant_id`=? WHERE `product_id`=?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("ssdissii", $name, $description, $price, $quantity, $img_url, $user, $merchant, $productId);
 

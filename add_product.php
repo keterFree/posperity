@@ -143,40 +143,44 @@ $conn->close();
                 // Check if all required fields are present
                 if (isset($_POST['name']) && isset($_POST['description']) && isset($_POST['price']) && isset($_POST['quantity']) && isset($_POST['img_url'])) {
 
+                    if (isset($php_merid)) {
+                        // Sanitize inputs to prevent SQL injection
+                        $name = htmlspecialchars($_POST['name']);
+                        $description = htmlspecialchars($_POST['description']);
+                        $price = floatval($_POST['price']); // Convert to float for price
+                        $quantity = intval($_POST['quantity']); // Convert to integer for quantity
+                        $img_url = htmlspecialchars($_POST['img_url']);
+                        $user = $php_suid;
+                        $merchant = $php_merid;
 
-                    // Sanitize inputs to prevent SQL injection
-                    $name = htmlspecialchars($_POST['name']);
-                    $description = htmlspecialchars($_POST['description']);
-                    $price = floatval($_POST['price']); // Convert to float for price
-                    $quantity = intval($_POST['quantity']); // Convert to integer for quantity
-                    $img_url = htmlspecialchars($_POST['img_url']);
-                    $user = $php_suid;
-                    $merchant = $php_merid;
+                        // Additional sanitization and validation can be added here
 
-                    // Additional sanitization and validation can be added here
+                        include 'dbconfig.php';
 
-                    include 'dbconfig.php';
-
-                    // Prepare and bind parameters for the SQL statement
-                    $sql = "INSERT INTO product (name, description, price, quantity, img_url, user_id, merchant_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("ssdissi", $name, $description, $price, $quantity, $img_url, $user, $merchant);
+                        // Prepare and bind parameters for the SQL statement
+                        $sql = "INSERT INTO product (name, description, price, quantity, img_url, user_id, merchant_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("ssdissi", $name, $description, $price, $quantity, $img_url, $user, $merchant);
 
 
-                    // Example user and merchant values (adjust as needed)
-                    // $user = echo '<script> usnValue </script>';
-                    // Assuming you store the merchant ID in a session variable
+                        // Example user and merchant values (adjust as needed)
+                        // $user = echo '<script> usnValue </script>';
+                        // Assuming you store the merchant ID in a session variable
 
-                    // Execute the SQL statement
-                    if ($stmt->execute()) {
-                        echo "Item added successfully.";
-                        // You can redirect the user to another page if needed
-                        // header("Location: inventory.php");
-                        // exit();
+                        // Execute the SQL statement
+                        if ($stmt->execute()) {
+                            echo "Item added successfully.";
+                            // You can redirect the user to another page if needed
+                            // header("Location: inventory.php");
+                            // exit();
+                        } else {
+                            echo "Error adding item: " . $stmt->error;
+                        }
                     } else {
-                        echo "Error adding item: " . $stmt->error;
+                        echo "<script>";
+                        echo "location.reload();";
+                        echo "</script>";
                     }
-
                     // Close the statement and connection
                     $stmt->close();
                     $conn->close();

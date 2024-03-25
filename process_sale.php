@@ -71,7 +71,7 @@
                     $updateStmt->bind_param("iii", $quantity, $productId, $quantity);
 
                     // Prepare and bind parameters for the insert query
-                    $insertSql = "INSERT INTO `sale` (`product_id`, `merchant`, `Timestamp`, `quantity`, `price`, `discount`, `selling_price`, `payment_method`, `user`) VALUES (?, ?, NOW(), ?, ?, ?, ?, 'money', ?)";
+                    $insertSql = "INSERT INTO `sale` (`product_id`, `merchant_id`, `Timestamp`, `quantity`, `price`, `discount`, `selling_price`, `payment_method`, `user_id`) VALUES (?, ?, NOW(), ?, ?, ?, ?, 'money', ?)";
                     $insertStmt = $conn->prepare($insertSql);
                     $insertStmt->bind_param("iisddii", $productId, $merchantId, $quantity, $price, $discount, $sellingPrice, $userId);
 

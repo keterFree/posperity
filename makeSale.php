@@ -77,7 +77,7 @@
                 include "dbconfig.php";
 
                 // Fetch data from the database
-                $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user`, `merchant` FROM `product` WHERE `merchant` = ?";
+                $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user_id`, `merchant_id` FROM `product` WHERE `merchant_id` = ?";
 
                 $stmt = $conn->prepare($sql);
 
