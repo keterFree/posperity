@@ -18,5 +18,5 @@ if ($conn->connect_error) {
 } else {
     
     // You can optionally uncomment the following line to confirm successful connection
-    echo "<script>alert('Connection successful');</script>";
+    // echo "<script>alert('Connection successful');</script>";
 }

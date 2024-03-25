@@ -1,5 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+<script>
+    // Retrieve data from local storage
+    const storedData = localStorage.getItem('loginData');
+
+    // Check if data retrieval was successful
+    if (storedData) {
+
+    } else {
+        window.location.href = "login.php";
+    }
+</script>
 
 <head>
     <meta charset="UTF-8">
@@ -99,16 +110,5 @@
             &copy; 2024 posperity,all rights reserved</p>
     </footer>
 </body>
-<script>
-    // Retrieve data from local storage
-    const storedData = localStorage.getItem('loginData');
-
-    // Check if data retrieval was successful
-    if (storedData) {
-
-    } else {
-        window.location.href = "login.php";
-    }
-</script>
 
 </html>
