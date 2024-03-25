@@ -1,26 +1,22 @@
 <?php
 // Database connection parameters
 $servername = "posper-server.mysql.database.azure.com";
-$username = "mqsvqcmdyl";
-$password = "@posperity1";
+$dbusername = "mqsvqcmdyl";
+$dbpassword = "@posperity1";
 $database = "posper";
 
-try {
-    $conn = new mysqli($servername, $dbusername, $dbpassword, $database);
-    if ($conn->connect_error) {
-        throw new Exception('connection error: ' . $conn->connect_error);
-    } else {
-        // Connection successful
-        // echo "Connection success!";
-    }
-} catch (Exception $e) {
-    $errorMessage = $e->getMessage();
-    // Escaping single quotes in the error message
-    $escapedErrorMessage = str_replace("'", "\'", $errorMessage);
+// Attempt to establish a database connection
+$conn = new mysqli($servername, $dbusername, $dbpassword, $database);
 
-    echo "<script>";
-    echo "  alert('Could Not Connect To Database\\n\\n" . $escapedErrorMessage . "');";
-    echo "</script>";
-
-    die("Connection failed: ");
+// Check connection
+if ($conn->connect_error) {
+    // Display error message using JavaScript alert
+    echo "<script>alert('Could Not Connect To Database\\n\\n" . $conn->connect_error . "');</script>";
+    
+    // Terminate script execution
+    die("Connection failed: " . $conn->connect_error);
+} else {
+    // Connection successful
+    // You can optionally uncomment the following line to confirm successful connection
+    // echo "Connected successfully!";
 }
