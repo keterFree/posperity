@@ -76,7 +76,7 @@ session_start();
             <div class="menu">
                 <a onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></a>
                 <div id="hide" class="navbar-toggle">
-                    <a class="bar" href="#">Home</a>
+                    <a class="bar" href="index.php">Home</a>
                     <a class="bar" href="makeSale.php">Make Sale</a>
                     <a class="bar" href="inventory.php">Inventory</a>
                     <a class="bar" href="transactions.php">Transactions</a>
@@ -88,7 +88,7 @@ session_start();
             </div>
             <nav class="nav" id="navbarLinks">
                 <ul>
-                    <li><a href="#">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="makeSale.php">Make Sale</a></li>
                     <li><a href="inventory.php">Inventory</a></li>
                     <li><a href="transactions.php">Transactions</a></li>
@@ -117,53 +117,60 @@ session_start();
             <div class="inventorydiv1">
                 <!-- <button>::</button> -->
                 <?php
-                $_SERVER["REQUEST_METHOD"] = "POST";
-                include 'processData.php';
-                // Connect to your database
-                include "dbconfig.php";
+                try {
+                    $_SERVER["REQUEST_METHOD"] = "POST";
+                    include 'processData.php';
+                    // Connect to your database
+                    include "dbconfig.php";
 
-                // Fetch data from the database
-                $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user`, `merchant` FROM `product` WHERE `merchant` = ?";
+                    // Fetch data from the database
+                    $sql = "SELECT `product_id`, `name`, `description`, `price`, `quantity`, `img_url`,`user`, `merchant` FROM `product` WHERE `merchant` = ?";
 
-                $stmt = $conn->prepare($sql);
+                    $stmt = $conn->prepare($sql);
 
-                // Bind the parameter to the statement
-                $stmt->bind_param("i", $php_merid);
+                    // Bind the parameter to the statement
+                    $stmt->bind_param("i", $php_merid);
 
-                // Execute the query
-                $stmt->execute();
+                    // Execute the query
+                    $stmt->execute();
 
-                // Get the result
-                $result = $stmt->get_result();
+                    // Get the result
+                    $result = $stmt->get_result();
 
-                // Check if the query returned any rows
-                if ($result->num_rows > 0) {
-                    // Output data of each row
-                    while ($row = $result->fetch_assoc()) {
-                        $prod = strval($row["product_id"]);
-                        echo "<div class='card' style='color:white;'>";
-                        echo "<img src='" . $row["img_url"] . "' alt='Product Image'>";
-                        echo "<div class='card-content'>";
-                        echo "<h4>" . $row["name"] . "</h4>";
-                        echo "<p>" . $row["description"] . "</p>";
-                        echo "<p>Ksh. " . $row["price"] . "</p>";
-                        $quantity = $row["quantity"];
+                    // Check if the query returned any rows
+                    if ($result->num_rows > 0) {
+                        // Output data of each row
+                        while ($row = $result->fetch_assoc()) {
+                            $prod = strval($row["product_id"]);
+                            echo "<div class='card' style='color:white;'>";
+                            echo "<img src='" . $row["img_url"] . "' alt='Product Image'>";
+                            echo "<div class='card-content'>";
+                            echo "<h4>" . $row["name"] . "</h4>";
+                            echo "<p>" . $row["description"] . "</p>";
+                            echo "<p>Ksh. " . $row["price"] . "</p>";
+                            $quantity = $row["quantity"];
 
-                        // Check if quantity is less than zero
-                        if ($quantity <= 0) {
-                            // If quantity is negative, echo "Out of stock" in red
-                            echo '<p style="color: red;">Out of stock</p>';
-                        } else {
-                            // Otherwise, echo the quantity as normal
-                            echo "<p>stock: $quantity</p>";
+                            // Check if quantity is less than zero
+                            if ($quantity <= 0) {
+                                // If quantity is negative, echo "Out of stock" in red
+                                echo '<p style="color: red;">Out of stock</p>';
+                            } else {
+                                // Otherwise, echo the quantity as normal
+                                echo "<p>stock: $quantity</p>";
+                            }
+                            echo '<div class="edit"><a href="editInventory.php?product_id=' . $prod . '"><i class="fa-regular fa-pen-to-square" style="color: #ffffff;"></i></a></div>';
+
+                            echo "</div>";
+                            echo "</div>";
                         }
-                        echo '<div class="edit"><a href="editInventory.php?product_id=' . $prod . '"><i class="fa-regular fa-pen-to-square" style="color: #ffffff;"></i></a></div>';
-
-                        echo "</div>";
-                        echo "</div>";
+                    } else {
+                        echo "<tr><td colspan='7'>No data found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='7'>No data found</td></tr>";
+                } catch (Exception $e) {
+                    // Print error message to JavaScript console
+                    echo "<script>";
+                    echo "console.log(" . $e->getMessage() . ");";
+                    echo "</script>";
                 }
                 $conn->close();
                 ?>
